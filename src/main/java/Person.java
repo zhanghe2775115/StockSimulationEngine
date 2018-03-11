@@ -4,10 +4,19 @@ import java.util.List;
 /**
  * Created by Drake on 2018/2/26.
  */
-public class Person {
+public class Person implements Runnable{
     private int mCash;
     private List<Stock> mStocks;
     private String mName;
+    private StockAccountInterface stockAccountInterface;
+
+    public StockAccountInterface getStockAccountInterface() {
+        return stockAccountInterface;
+    }
+
+    public void setStockAccountInterface(StockAccountInterface stockAccountInterface) {
+        this.stockAccountInterface = stockAccountInterface;
+    }
 
     public int getmCash() {
         return mCash;
@@ -39,29 +48,38 @@ public class Person {
         mStocks = new LinkedList<Stock>();
     }
 
-    public boolean buyStock(Stock stock) {
-        if (mCash < stock.getCurrValue()) {
-            System.out.println("not enough money for stock: " + stock.getStockName());
-            return false;
-        }
-        mCash = mCash - stock.getCurrValue();
-        mStocks.add(stock);
-        System.out.println("purchased stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrValue() + " balance: " + this.mCash);
-        return true;
+    public boolean makeDeal(Stock stock) {
+//        if (mCash < stock.getCurrPrice()) {
+//            System.out.println("not enough money for stock: " + stock.getStockName());
+//            return false;
+//        }
+//        mCash = mCash - stock.getCurrPrice();
+//        mStocks.add(stock);
+//        System.out.println("purchased stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrPrice() + " balance: " + this.mCash);
+//        return true;
+        Order order = new Order();
+        return stockAccountInterface.pushOrder(order);
+
     }
 
-    public boolean sellStock(Stock stock) {
-        mCash = mCash + stock.getCurrValue();
-        mStocks.remove(stock);
-        System.out.println("selled stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrValue() + " balance: " + this.mCash);
-        return true;
-    }
+//    public boolean sellStock(Stock stock) {
+//        mCash = mCash + stock.getCurrPrice();
+//        mStocks.remove(stock);
+//        System.out.println("selled stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrPrice() + " balance: " + this.mCash);
+//        return true;
+//        Order order = new Order();
+//        return stockAccountInterface.sell(order);
+//    }
 
     public void showWealth() {
         int balance = this.mCash;
         for (int i = 0; i < mStocks.size(); i++) {
-            balance += mStocks.get(i).getCurrValue();
+            balance += mStocks.get(i).getCurrPrice();
         }
         System.out.println(this.mName + " has: " + balance);
+    }
+
+    public void run() {
+
     }
 }

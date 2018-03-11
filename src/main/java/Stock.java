@@ -2,10 +2,9 @@
  * Created by Drake on 2018/2/26.
  */
 public class Stock {
-    static private int gId = 0;
+    static private int id = 0;
     private String stockName;
-    private int currValue;
-    private int mId;
+    private int currPrice;
 
     public String getStockName() {
         return stockName;
@@ -15,38 +14,29 @@ public class Stock {
         this.stockName = stockName;
     }
 
-    public int getCurrValue() {
-        return currValue;
+    public int getCurrPrice() {
+        return currPrice;
     }
 
-    public void setCurrValue(int currValue) {
-        this.currValue = currValue;
+    public void setCurrPrice(int currPrice) {
+        this.currPrice = currPrice;
     }
 
-    public Stock(String stockName, int currValue) {
+    public Stock(String stockName, int currPrice) {
         this.stockName = stockName;
-        this.currValue = currValue;
-        gId++;
-        this.mId = gId;
+        this.currPrice = currPrice;
+        id++;
     }
 
-    public static int getgId() {
-        return gId;
+    public static int getId() {
+        return id;
     }
 
-    public static void setgId(int gId) {
-        Stock.gId = gId;
-    }
-
-    public int getmId() {
-        return mId;
-    }
-
-    public void setmId(int mId) {
-        this.mId = mId;
+    public static void setId(int id) {
+        Stock.id = id;
     }
 
     public void changePrice(int i) {
-        this.currValue += i;
+        this.currPrice += i;
     }
 }
