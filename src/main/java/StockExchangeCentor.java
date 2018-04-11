@@ -1,29 +1,129 @@
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 /**
  * Created by Drake on 2018/3/11.
  */
- public  class  StockExchangeCentor implements  Runnable {
+ public  class  StockExchangeCentor  {
     private  String exChangeCentorName;
     private List<Stock> stocks;
     private static StockExchangeCentor stockExchangeCentor;
     private Queue<Order> queue;
+    private Queue<Order> qProcess;
+    private Queue<Order> tempQueue;
+    private WorkState inProcessState;
+    private WorkState outProcessStae;
+    private WorkState workState;
+    private InProcessThread inProcessThread;
+    private OutProcessThread outProcessThread;
 
-    public synchronized boolean pushOrder(Order order){
-        queue.add(order);
+    static {
+        stockExchangeCentor = new StockExchangeCentor("NewYork");
+    }
+    public StockExchangeCentor(String exChangeCentorName) {
+        queue = new LinkedList<Order>();
+        qProcess = new LinkedList<Order>();
+        inProcessThread = new InProcessThread();
+        outProcessThread = new OutProcessThread();
+        this.exChangeCentorName = exChangeCentorName;
+    }
+
+    public  boolean pushOrder(Order order){
+        synchronized (queue) {
+            queue.add(order);
+        }
         return  true;
     }
-    public void run() {
+    private class InProcessThread extends Thread {
+        public InProcessThread() {
+            System.out.println("InProcessThread construct");
+        }
 
+        public void run() {
+            Order order;
+            System.out.print("InProcessThread start");
+            tempQueue = new LinkedList<Order>();
+            try {
+                while (inProcessState == WorkState.Working) {
+                    if (!queue.isEmpty()) {
+                        synchronized (queue) {
+                            while (!queue.isEmpty()) {
+                                tempQueue.add(queue.remove());
+                                System.out.println("inProcessThread queue size"+queue.size());
+                            }
+                         //   notify();
+
+                        }
+                    }
+                    synchronized (qProcess){
+                        if(qProcess.isEmpty()){
+                            while (!tempQueue.isEmpty()){
+                                qProcess.add(tempQueue.remove());
+                                System.out.println("inProcessThread qProcess size"+queue.size());
+                            }
+                           // notify();
+                        }
+                    }
+                    //wait();
+                }
+            } catch (Exception e) {
+
+            }
+
+
+        }
     }
+    private class OutProcessThread extends Thread {
+        public void run() {
+            System.out.println("OutProcessThread start");
+            Order order;
+            try {
+                while (outProcessStae == WorkState.Working) {
+                    if (!qProcess.isEmpty()) {
+                        synchronized (qProcess) {
+                            while (!qProcess.isEmpty()) {
+                                System.out.println("OutProcessThread: "+queue.remove());
+                            }
 
-    public StockExchangeCentor getInstance(){
-        if(stockExchangeCentor == null)
-        synchronized (stockExchangeCentor){
-            stockExchangeCentor = new StockExchangeCentor();
+                        }
+
+
+                    }
+                   // wait();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
+    public static void start(){
+        StockExchangeCentor stockExchangeCentor = getInstance();
+
+
+        stockExchangeCentor.setWorkState( WorkState.Working);
+        stockExchangeCentor.setInProcessState( WorkState.Working);
+        stockExchangeCentor.setOutProcessStae( WorkState.Working);
+        stockExchangeCentor.outProcessThread.start();
+        stockExchangeCentor.inProcessThread.start();
+    }
+    public static  StockExchangeCentor getInstance(){
+        if(stockExchangeCentor == null) {
+            synchronized (StockExchangeCentor.class) {
+                stockExchangeCentor = new StockExchangeCentor("NewYork");
+            }
         }
         return stockExchangeCentor;
+    }
+    public Stock getStock(int id){
+        for (Stock s:stocks
+             ) {
+            if(s.getId() == id)
+                return s;
+        }
+        return null;
     }
 
     public String getExChangeCentorName() {
@@ -48,4 +148,27 @@ import java.util.Queue;
         return queue;
     }
 
+    public WorkState getWorkState() {
+        return workState;
+    }
+
+    public void setWorkState(WorkState workState) {
+        this.workState = workState;
+    }
+
+    public WorkState getInProcessState() {
+        return inProcessState;
+    }
+
+    public void setInProcessState(WorkState inProcessState) {
+        this.inProcessState = inProcessState;
+    }
+
+    public WorkState getOutProcessStae() {
+        return outProcessStae;
+    }
+
+    public void setOutProcessStae(WorkState outProcessStae) {
+        this.outProcessStae = outProcessStae;
+    }
 }

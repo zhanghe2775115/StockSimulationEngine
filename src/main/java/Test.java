@@ -11,27 +11,42 @@ public class Test {
     private static int STOCKCOUNT = 4;
 
     public static void main(String[] args) {
-//        String[] stockNamePreFix = {"Beer", "WATER", "GAME", "DRUG", "MOVIE"};
-//        Person tom = new Person(INITIALCASH, "TOM");
-//        Person jerry = new Person(INITIALCASH, "JERRY");
-//        Person hans = new Person(INITIALCASH, "HANS");
-//        Person bob = new Person(INITIALCASH, "BOB");
+        String[] stockNamePreFix = {"Beer", "WATER", "GAME", "DRUG", "MOVIE"};
+        Person tom = new Person(INITIALCASH, "TOM");
+        Person jerry = new Person(INITIALCASH, "JERRY");
+        Person hans = new Person(INITIALCASH, "HANS");
+        Person bob = new Person(INITIALCASH, "BOB");
 //        List<Person> peopleList = new ArrayList<Person>();
 //        peopleList.add(tom);
 //        peopleList.add(jerry);
 //        peopleList.add(hans);
 //        peopleList.add(bob);
-//        List<Stock> stocks = new ArrayList<Stock>();
-//        Random random = new Random();
-//        for (int i = 0; i < STOCKCOUNT; i++) {
-//            String prefix = stockNamePreFix[random.nextInt(stockNamePreFix.length)];
-//            String name = prefix + String.valueOf(i);
-//            stocks.add(new Stock(name, random.nextInt(100)));
+        List<Stock> stocks = new ArrayList<Stock>();
+        Random random = new Random();
+        for (int i = 0; i < STOCKCOUNT; i++) {
+            String prefix = stockNamePreFix[random.nextInt(stockNamePreFix.length)];
+            String name = prefix + String.valueOf(i);
+            stocks.add(new Stock(name, random.nextInt(100)));
 //            int buyer = random.nextInt(peopleList.size());
 //            while (!peopleList.get(buyer).buyStock(stocks.get(i))) {
 //                buyer = random.nextInt(peopleList.size());
 //            }
-//        }
+        }
+        StockExchangeCentor.getInstance().setStocks(stocks);
+        tom.setState(true);
+        tom.setStockAccountInterface(new StockAccountInterfaceImpl());
+        jerry.setState(true);
+        jerry.setStockAccountInterface(new StockAccountInterfaceImpl());
+        hans.setState(true);
+        hans.setStockAccountInterface(new StockAccountInterfaceImpl());
+        bob.setState(true);
+        bob.setStockAccountInterface(new StockAccountInterfaceImpl());
+        new Thread(tom).start();
+        new Thread(jerry).start();
+        new Thread(hans).start();
+        new Thread(bob).start();
+        StockExchangeCentor.start();
+        while (true){}
 //
 //        long count = TRADETIMES;
 //        while (--count > 0) {

@@ -1,5 +1,9 @@
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by Drake on 2018/2/26.
@@ -9,7 +13,7 @@ public class Person implements Runnable{
     private List<Stock> mStocks;
     private String mName;
     private StockAccountInterface stockAccountInterface;
-
+    private boolean state;
     public StockAccountInterface getStockAccountInterface() {
         return stockAccountInterface;
     }
@@ -46,6 +50,7 @@ public class Person implements Runnable{
         this.mCash = mCash;
         this.mName = mName;
         mStocks = new LinkedList<Stock>();
+        state = false;
     }
 
     public boolean makeDeal(Stock stock) {
@@ -58,6 +63,13 @@ public class Person implements Runnable{
 //        System.out.println("purchased stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrPrice() + " balance: " + this.mCash);
 //        return true;
         Order order = new Order();
+        order.setOwner(stockAccountInterface);
+        order.setAmount(1);
+        order.setOrderType(OrderEnum.PURCHASE);
+        order.setPrice(100);
+        List<Stock> stocks = stockAccountInterface.getAllStock();
+        order.setStock(stocks.get(new Random().nextInt(stocks.size())));
+        System.out.println(this.mName + " : "+order.getStock().toString());
         return stockAccountInterface.pushOrder(order);
 
     }
@@ -80,6 +92,17 @@ public class Person implements Runnable{
     }
 
     public void run() {
+        while (state){
+            try {
+                makeDeal(null);
+                sleep(1000);
+            }catch (Exception e){
+                System.out.println(e);
+            }
+        }
+    }
 
+    public void setState(boolean state) {
+        this.state = state;
     }
 }
