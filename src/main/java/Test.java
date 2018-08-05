@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 /**
  * Created by Drake on 2018/2/26.
  */
