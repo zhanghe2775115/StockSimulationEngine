@@ -2,9 +2,10 @@
  * Created by Drake on 2018/2/26.
  */
 public class Stock {
-    static private int id = 0;
+    static  int id = 0;
     private String stockName;
     private int currPrice;
+
 
     public String getStockName() {
         return stockName;
@@ -28,11 +29,11 @@ public class Stock {
         id++;
     }
 
-    public static int getId() {
+    public  int getId() {
         return id;
     }
 
-    public static void setId(int id) {
+    public  void setId(int id) {
         Stock.id = id;
     }
 

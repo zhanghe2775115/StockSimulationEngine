@@ -12,6 +12,7 @@ public class Order {
     private OrderEnum orderType;
 
     public Order() {
+        this.date = new Date();
     }
 
     public Order(int amount, Stock stock, int price, StockAccountInterface owner, Date date, OrderEnum orderType) {
