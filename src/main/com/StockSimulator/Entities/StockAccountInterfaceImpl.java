@@ -1,3 +1,5 @@
+package com.StockSimulator.Entities;
+
 import java.util.List;
 
 /**

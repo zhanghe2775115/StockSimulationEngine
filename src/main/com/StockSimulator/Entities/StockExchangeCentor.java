@@ -1,6 +1,11 @@
+package com.StockSimulator.Entities;
+
+import com.StockSimulator.Threads.OrderProcessThread;
+
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
+
 /**
  * Created by Drake on 2018/3/11.
  */
@@ -14,7 +19,7 @@ import java.util.concurrent.*;
     // 线程池所使用的缓冲队列大小
     private final static int WORK_QUEUE_SIZE = 50;
     // 消息缓冲队列
-    private Queue<Order> cacheQueue = null;//= new ConcurrentLinkedDeque<Order>();
+    private Queue<Order> cacheQueue = null;//= new ConcurrentLinkedDeque<com.StockSimulator.Order>();
     private Queue<Order> queueImplA = new ConcurrentLinkedDeque<Order>();
     private Queue<Order> queueImplB = new ConcurrentLinkedDeque<Order>();
     private String exChangeCentorName;
@@ -40,7 +45,7 @@ import java.util.concurrent.*;
             TimeUnit.SECONDS, new ArrayBlockingQueue(WORK_QUEUE_SIZE), this.handler);
 
     public StockExchangeCentor(String exChangeCentorName) {
-        producerQueue = queueImplA;//new LinkedList<Order>();
+        producerQueue = queueImplA;//new LinkedList<com.StockSimulator.Order>();
         consumerQueue = queueImplB;
         cacheQueue = new ConcurrentLinkedDeque<Order>();
         inProcessThread = new InProcessThread();
@@ -112,7 +117,7 @@ import java.util.concurrent.*;
         stockExchangeCentor.setInProcessState( WorkState.Working);
         stockExchangeCentor.inProcessThread.start();
     }
-    public static  StockExchangeCentor getInstance(){
+    public static StockExchangeCentor getInstance(){
         if(stockExchangeCentor == null) {
             synchronized (StockExchangeCentor.class) {
                 stockExchangeCentor = new StockExchangeCentor("NewYork");

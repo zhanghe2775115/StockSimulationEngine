@@ -1,21 +1,29 @@
+package com.StockSimulator;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import com.StockSimulator.Entities.*;
+import org.junit.jupiter.api.Test;
+
 /**
  * Created by Drake on 2018/2/26.
  */
-public class Test {
+
+public class ExchangeCenterTestSuit {
     private static long TRADETIMES = 10000;
     private static int INITIALCASH = 1000;
     private static int STOCKCOUNT = 4;
 
-    public static void main(String[] args) {
+    @Test
+    public void ExchangeCenterTest() {
         String[] stockNamePreFix = {"Beer", "WATER", "GAME", "DRUG", "MOVIE"};
         Person tom = new Person(INITIALCASH, "TOM");
         Person jerry = new Person(INITIALCASH, "JERRY");
         Person hans = new Person(INITIALCASH, "HANS");
         Person bob = new Person(INITIALCASH, "BOB");
-//        List<Person> peopleList = new ArrayList<Person>();
+//        List<com.StockSimulator.Person> peopleList = new ArrayList<com.StockSimulator.Person>();
 //        peopleList.add(tom);
 //        peopleList.add(jerry);
 //        peopleList.add(hans);
@@ -45,7 +53,8 @@ public class Test {
         new Thread(hans).start();
         new Thread(bob).start();
         StockExchangeCentor.start();
-        while (true){}
+
+        return;
 //
 //        long count = TRADETIMES;
 //        while (--count > 0) {
@@ -58,7 +67,7 @@ public class Test {
 //                }
 //            }
 //            int seller;
-//            Person sellMan = null;
+//            com.StockSimulator.Person sellMan = null;
 //            do {
 //                seller = random.nextInt(peopleList.size());
 //                sellMan = peopleList.get(seller);
@@ -67,9 +76,9 @@ public class Test {
 //            do {
 //                buyer = random.nextInt(peopleList.size());
 //            } while (buyer == seller);
-//            Person buyMan = peopleList.get(buyer);
+//            com.StockSimulator.Person buyMan = peopleList.get(buyer);
 //            int stockId = random.nextInt(sellMan.getmStocks().size());
-//            Stock stock = sellMan.getmStocks().get(stockId);
+//            com.StockSimulator.Stock stock = sellMan.getmStocks().get(stockId);
 //            if (buyMan.buyStock(stock)) {
 //                sellMan.sellStock(stock);
 //            }

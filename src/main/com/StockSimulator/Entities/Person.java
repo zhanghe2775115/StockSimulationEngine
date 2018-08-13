@@ -1,4 +1,5 @@
-import java.util.Date;
+package com.StockSimulator.Entities;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -74,12 +75,12 @@ public class Person implements Runnable{
 
     }
 
-//    public boolean sellStock(Stock stock) {
+//    public boolean sellStock(com.StockSimulator.Stock stock) {
 //        mCash = mCash + stock.getCurrPrice();
 //        mStocks.remove(stock);
 //        System.out.println("selled stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrPrice() + " balance: " + this.mCash);
 //        return true;
-//        Order order = new Order();
+//        com.StockSimulator.Order order = new com.StockSimulator.Order();
 //        return stockAccountInterface.sell(order);
 //    }
 

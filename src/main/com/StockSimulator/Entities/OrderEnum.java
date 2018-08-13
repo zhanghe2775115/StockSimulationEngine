@@ -1,3 +1,5 @@
+package com.StockSimulator.Entities;
+
 /**
  * Created by Drake on 2018/3/11.
  */

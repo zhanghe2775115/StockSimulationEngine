@@ -1,3 +1,7 @@
+package com.StockSimulator.Threads;
+
+import com.StockSimulator.Entities.*;
+
 public class OrderProcessThread implements Runnable {
 
     Order order;
