@@ -1,9 +1,11 @@
+package com.zhanghe.stockSimulating.Enum;
+
 /**
  * Created by Drake on 2018/3/25.
  */
 public enum WorkState {
-    Working(true,"working"),
-    Closing(false,"closing");
+    Working(true, "working"),
+    Closing(false, "closing");
     private boolean value;
     private String state;
 

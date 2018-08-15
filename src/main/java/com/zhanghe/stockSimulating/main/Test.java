@@ -1,6 +1,14 @@
+package com.zhanghe.stockSimulating.main;
+
+import com.zhanghe.stockSimulating.exchangeCentor.StockExchangeCentor;
+import com.zhanghe.stockSimulating.stockBean.Stock;
+import com.zhanghe.stockSimulating.user.Person;
+import com.zhanghe.stockSimulating.facade.impl.StockAccountInterfaceImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 /**
  * Created by Drake on 2018/2/26.
  */
@@ -45,7 +53,8 @@ public class Test {
         new Thread(hans).start();
         new Thread(bob).start();
         StockExchangeCentor.start();
-        while (true){}
+        while (true) {
+        }
 //
 //        long count = TRADETIMES;
 //        while (--count > 0) {

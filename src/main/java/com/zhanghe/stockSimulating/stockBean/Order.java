@@ -1,15 +1,29 @@
+package com.zhanghe.stockSimulating.stockBean;
+
+import com.zhanghe.stockSimulating.Enum.OrderEnum;
+import com.zhanghe.stockSimulating.facade.StockAccountInterface;
+
 import java.util.Date;
 
 /**
  * Created by Drake on 2018/3/11.
  */
 public class Order {
+    private String orderID;
     private int amount;
     private Stock stock;
     private int price;
     private StockAccountInterface owner;
     private Date date;
     private OrderEnum orderType;
+
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
 
     public Order() {
         this.date = new Date();

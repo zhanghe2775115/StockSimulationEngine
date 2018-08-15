@@ -1,16 +1,18 @@
+package com.zhanghe.stockSimulating.Enum;
+
 /**
  * Created by Drake on 2018/3/11.
  */
 public enum OrderEnum {
-    PURCHASE(0,"PURCHASE"),
-    SELL(1,"SELL");
+    PURCHASE(0, "PURCHASE"),
+    SELL(1, "SELL");
     private int id;
     private String type;
 
     OrderEnum(int id, String type) {
         this.id = id;
         this.type = type;
-}
+    }
 
     public int getId() {
         return id;

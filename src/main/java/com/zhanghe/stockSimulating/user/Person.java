@@ -1,19 +1,24 @@
-import java.util.Date;
+package com.zhanghe.stockSimulating.user;
+
+import com.zhanghe.stockSimulating.Enum.OrderEnum;
+import com.zhanghe.stockSimulating.stockBean.Order;
+import com.zhanghe.stockSimulating.stockBean.Stock;
+import com.zhanghe.stockSimulating.facade.StockAccountInterface;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import static java.lang.Thread.sleep;
-
 /**
  * Created by Drake on 2018/2/26.
  */
-public class Person implements Runnable{
+public class Person implements Runnable {
     private int mCash;
     private List<Stock> mStocks;
     private String mName;
     private StockAccountInterface stockAccountInterface;
     private boolean state;
+
     public StockAccountInterface getStockAccountInterface() {
         return stockAccountInterface;
     }
@@ -66,10 +71,14 @@ public class Person implements Runnable{
         order.setOwner(stockAccountInterface);
         order.setAmount(1);
         order.setOrderType(OrderEnum.PURCHASE);
-        order.setPrice(100);
         List<Stock> stocks = stockAccountInterface.getAllStock();
-        order.setStock(stocks.get(new Random().nextInt(stocks.size())));
-        System.out.println(this.mName + " : "+order.getStock().toString());
+        Stock todo = stocks.get(new Random().nextInt(stocks.size()));
+        int price = todo.getCurrPrice() + (new Random().nextInt(10) - 10);
+        order.setPrice(price);
+        order.setStock(todo);
+        String orderID = this.getmName() + "";
+        order.setOrderID(orderID);
+        System.out.println(this.mName + " " + order.getOrderType().toString() + " : " + order.getStock().toString());
         return stockAccountInterface.pushOrder(order);
 
     }
@@ -92,11 +101,11 @@ public class Person implements Runnable{
     }
 
     public void run() {
-        while (state){
+        while (state) {
             try {
                 makeDeal(null);
-                sleep(1000);
-            }catch (Exception e){
+                //  sleep(1000);
+            } catch (Exception e) {
                 System.out.println(e);
             }
         }

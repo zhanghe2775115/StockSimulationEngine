@@ -1,3 +1,8 @@
+package com.zhanghe.stockSimulating.facade;
+
+import com.zhanghe.stockSimulating.stockBean.Order;
+import com.zhanghe.stockSimulating.stockBean.Stock;
+
 import java.util.List;
 
 /**
@@ -8,5 +13,6 @@ public interface StockAccountInterface {
 
     public List<Stock> getAllStock();
 
-    public Stock getStock(int id );
+
+    public Stock getStock(int id);
 }

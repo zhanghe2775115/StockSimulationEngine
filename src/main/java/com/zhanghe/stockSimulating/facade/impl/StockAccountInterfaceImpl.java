@@ -1,3 +1,10 @@
+package com.zhanghe.stockSimulating.facade.impl;
+
+import com.zhanghe.stockSimulating.exchangeCentor.StockExchangeCentor;
+import com.zhanghe.stockSimulating.stockBean.Order;
+import com.zhanghe.stockSimulating.stockBean.Stock;
+import com.zhanghe.stockSimulating.facade.StockAccountInterface;
+
 import java.util.List;
 
 /**
@@ -6,7 +13,10 @@ import java.util.List;
 public class StockAccountInterfaceImpl implements StockAccountInterface {
     private StockExchangeCentor stockExchangeCentor;
 
+    private int orderIndex;
+
     public StockAccountInterfaceImpl() {
+        orderIndex = 0;
         this.stockExchangeCentor = StockExchangeCentor.getInstance();
     }
 
@@ -19,6 +29,7 @@ public class StockAccountInterfaceImpl implements StockAccountInterface {
     }
 
     public boolean pushOrder(Order order) {
+        order.setOrderID(order.getOrderID() + "-" + orderIndex++ + "-");
         return stockExchangeCentor.pushOrder(order);
     }
 
