@@ -1,4 +1,4 @@
-package com.zhanghe.stockSimulating.Enum;
+package com.zhanghe.stockSimulating.Util.Enum;
 
 /**
  * Created by Drake on 2018/3/11.

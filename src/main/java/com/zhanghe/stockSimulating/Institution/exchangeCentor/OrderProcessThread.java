@@ -1,6 +1,6 @@
-package com.zhanghe.stockSimulating.exchangeCentor;
+package com.zhanghe.stockSimulating.Institution.exchangeCentor;
 
-import com.zhanghe.stockSimulating.stockBean.Order;
+import com.zhanghe.stockSimulating.facade.bean.Order;
 
 public class OrderProcessThread implements Runnable {
 

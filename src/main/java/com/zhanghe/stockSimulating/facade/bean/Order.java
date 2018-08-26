@@ -1,7 +1,7 @@
-package com.zhanghe.stockSimulating.stockBean;
+package com.zhanghe.stockSimulating.facade.bean;
 
-import com.zhanghe.stockSimulating.Enum.OrderEnum;
-import com.zhanghe.stockSimulating.facade.StockAccountInterface;
+import com.zhanghe.stockSimulating.Util.Enum.OrderEnum;
+import com.zhanghe.stockSimulating.facade.interfaces.StockAccountInterface;
 
 import java.util.Date;
 
