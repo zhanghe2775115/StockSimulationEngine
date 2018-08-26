@@ -1,11 +1,11 @@
-package com.StockSimulator.Entities;
+package com.zhanghe.stockSimulating.Util.Enum;
 
 /**
  * Created by Drake on 2018/3/25.
  */
 public enum WorkState {
-    Working(true,"working"),
-    Closing(false,"closing");
+    Working(true, "working"),
+    Closing(false, "closing");
     private boolean value;
     private String state;
 

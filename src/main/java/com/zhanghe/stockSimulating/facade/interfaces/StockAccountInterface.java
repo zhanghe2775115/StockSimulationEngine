@@ -1,4 +1,7 @@
-package com.StockSimulator.Entities;
+package com.zhanghe.stockSimulating.facade.interfaces;
+
+import com.zhanghe.stockSimulating.facade.bean.Order;
+import com.zhanghe.stockSimulating.facade.bean.Stock;
 
 import java.util.List;
 
@@ -9,6 +12,7 @@ public interface StockAccountInterface {
     public boolean pushOrder(Order order);
 
     public List<Stock> getAllStock();
+
 
     public Stock getStock(int id);
 }

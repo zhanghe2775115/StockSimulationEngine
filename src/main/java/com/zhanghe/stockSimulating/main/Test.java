@@ -1,8 +1,8 @@
 package com.zhanghe.stockSimulating.main;
 
-import com.zhanghe.stockSimulating.exchangeCentor.StockExchangeCentor;
-import com.zhanghe.stockSimulating.stockBean.Stock;
-import com.zhanghe.stockSimulating.user.Person;
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.StockExchangeCentor;
+import com.zhanghe.stockSimulating.facade.bean.Stock;
+import com.zhanghe.stockSimulating.User.Person;
 import com.zhanghe.stockSimulating.facade.impl.StockAccountInterfaceImpl;
 
 import java.util.ArrayList;

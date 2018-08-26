@@ -1,6 +1,11 @@
-package com.StockSimulator.Entities;
+package com.zhanghe.stockSimulating.Institution.exchangeCentor;
 
-import com.StockSimulator.Threads.OrderProcessThread;
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.OrderProcessThread;
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.OrderQueueManager;
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.SortedOrderQueue;
+import com.zhanghe.stockSimulating.Util.Enum.WorkState;
+import com.zhanghe.stockSimulating.facade.bean.Order;
+import com.zhanghe.stockSimulating.facade.bean.Stock;
 
 import java.util.List;
 import java.util.Queue;
@@ -9,8 +14,8 @@ import java.util.concurrent.*;
 /**
  * Created by Drake on 2018/3/11.
  */
- public  class  StockExchangeCentor  {
-
+public class StockExchangeCentor {
+    /* concurrent thread pool setting */
     private final static int CORE_POOL_SIZE = 2;
     // 线程池维护线程的最大数量
     private final static int MAX_POOL_SIZE = 10;
@@ -19,7 +24,7 @@ import java.util.concurrent.*;
     // 线程池所使用的缓冲队列大小
     private final static int WORK_QUEUE_SIZE = 50;
     // 消息缓冲队列
-    private Queue<Order> cacheQueue = null;//= new ConcurrentLinkedDeque<com.StockSimulator.Order>();
+    private Queue<Order> cacheQueue = null;//= new ConcurrentLinkedDeque<Order>();
     private Queue<Order> queueImplA = new ConcurrentLinkedDeque<Order>();
     private Queue<Order> queueImplB = new ConcurrentLinkedDeque<Order>();
     private String exChangeCentorName;
@@ -28,16 +33,19 @@ import java.util.concurrent.*;
     private Queue<Order> producerQueue;
     private Queue<Order> consumerQueue;
     private WorkState inProcessState;
-    private WorkState outProcessStae;
     private WorkState workState;
     private InProcessThread inProcessThread;
+    long count = 0;
 
+    private SortedOrderQueue[] waitedOrders;
+    //private SortedOrderQueue waitedProcessingSoldOrder = new SortedOrderQueue();
+   // private SortedOrderQueue waitedProcessingBuyingOrder = new SortedOrderQueue();
 
     final RejectedExecutionHandler handler = new RejectedExecutionHandler() {
         @Override
         public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
             System.out.println("转交调度线程池");
-            cacheQueue.offer(((OrderProcessThread)r).getOrder());
+            cacheQueue.offer(((OrderProcessThread) r).getOrder());
         }
     };
     final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
@@ -45,17 +53,24 @@ import java.util.concurrent.*;
             TimeUnit.SECONDS, new ArrayBlockingQueue(WORK_QUEUE_SIZE), this.handler);
 
     public StockExchangeCentor(String exChangeCentorName) {
-        producerQueue = queueImplA;//new LinkedList<com.StockSimulator.Order>();
+        producerQueue = queueImplA;//new LinkedList<Order>();
         consumerQueue = queueImplB;
         cacheQueue = new ConcurrentLinkedDeque<Order>();
         inProcessThread = new InProcessThread();
         this.exChangeCentorName = exChangeCentorName;
+        //waited queue init
+        waitedOrders = OrderQueueManager.getWaitedOrdersQueue();
+
     }
 
-    public  boolean pushOrder(Order order){
+    public boolean pushOrder(Order order) {
+        StringBuilder sb = new StringBuilder(order.getOrderID());
+        sb.append(System.currentTimeMillis());
+        order.setOrderID(sb.toString());
         producerQueue.add(order);
-        return  true;
+        return true;
     }
+
     final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     final ScheduledFuture taskHandler = scheduler.scheduleAtFixedRate(new Runnable() {
         @Override
@@ -64,9 +79,10 @@ import java.util.concurrent.*;
                 if (threadPool.getQueue().size() < WORK_QUEUE_SIZE) {
                     System.out.print("调度：");
                     Order order = cacheQueue.poll();
-                    OrderProcessThread orderProcessThread = new OrderProcessThread();
-                    orderProcessThread.setOrder(order);
-                    threadPool.execute(orderProcessThread);
+                    waitedOrders[order.getOrderType().getId()].pushOrder(order);
+                   // OrderProcessThread orderProcessThread = new OrderProcessThread();
+                   //orderProcessThread.setOrder(order);
+                  //  threadPool.execute(orderProcessThread);
                 }
                 // while (msgQueue.peek() != null) {
                 // }
@@ -94,12 +110,15 @@ import java.util.concurrent.*;
                                 producerQueue = consumerQueue;
                                 consumerQueue = temp;
                             }
-                            OrderProcessThread orderProcessThread = new OrderProcessThread();
+                            OrderProcessThread orderProcessThread;
                             while (!consumerQueue.isEmpty()) {
-                                orderProcessThread.setOrder(consumerQueue.poll());
-                                threadPool.execute(orderProcessThread);
+                                //orderProcessThread = new OrderProcessThread();
+                                //orderProcessThread.setOrder(consumerQueue.poll());
+                                order = consumerQueue.poll();
+                                waitedOrders[order.getOrderType().getId()].pushOrder(order);
+                               // threadPool.execute(orderProcessThread);
                             }
-
+                            sleep(500);
                         }
                     }
                 }
@@ -111,24 +130,26 @@ import java.util.concurrent.*;
         }
     }
 
-    public static void start(){
+    public static void start() {
         StockExchangeCentor stockExchangeCentor = getInstance();
-        stockExchangeCentor.setWorkState( WorkState.Working);
-        stockExchangeCentor.setInProcessState( WorkState.Working);
+        stockExchangeCentor.setWorkState(WorkState.Working);
+        stockExchangeCentor.setInProcessState(WorkState.Working);
         stockExchangeCentor.inProcessThread.start();
     }
-    public static StockExchangeCentor getInstance(){
-        if(stockExchangeCentor == null) {
+
+    public static StockExchangeCentor getInstance() {
+        if (stockExchangeCentor == null) {
             synchronized (StockExchangeCentor.class) {
                 stockExchangeCentor = new StockExchangeCentor("NewYork");
             }
         }
         return stockExchangeCentor;
     }
-    public Stock getStock(int id){
-        for (Stock s:stocks
-             ) {
-            if(s.getId() == id)
+
+    public Stock getStock(int id) {
+        for (Stock s : stocks
+        ) {
+            if (s.getId() == id)
                 return s;
         }
         return null;
@@ -174,11 +195,4 @@ import java.util.concurrent.*;
         this.inProcessState = inProcessState;
     }
 
-    public WorkState getOutProcessStae() {
-        return outProcessStae;
-    }
-
-    public void setOutProcessStae(WorkState outProcessStae) {
-        this.outProcessStae = outProcessStae;
-    }
 }
