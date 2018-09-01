@@ -4,7 +4,7 @@ package com.zhanghe.stockSimulating.Util.Enum;
  * Created by Drake on 2018/3/11.
  */
 public enum OrderEnum {
-    PURCHASE(0, "PURCHASE"),
+    BUYINTO(0, "BUYINTO"),
     SELL(1, "SELL"),
     MAX(2,"MAX");
     private int id;

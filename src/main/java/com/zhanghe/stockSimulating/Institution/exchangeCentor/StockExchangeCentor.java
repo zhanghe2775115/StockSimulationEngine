@@ -2,6 +2,7 @@ package com.zhanghe.stockSimulating.Institution.exchangeCentor;
 
 
 import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.OrderProcessThread;
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.OrderProcessThreadPoolManager;
 import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.OrderQueueManager;
 import com.zhanghe.stockSimulating.Institution.exchangeCentor.OrderQueue.SortedOrderQueue;
 
@@ -37,22 +38,16 @@ public class StockExchangeCentor {
     private WorkState inProcessState;
     private WorkState workState;
     private InProcessThread inProcessThread;
-    long count = 0;
+    private static OrderProcessThreadPoolManager orderProcessThreadPoolManager;
 
     private SortedOrderQueue[] waitedOrders;
     //private SortedOrderQueue waitedProcessingSoldOrder = new SortedOrderQueue();
    // private SortedOrderQueue waitedProcessingBuyingOrder = new SortedOrderQueue();
 
-    final RejectedExecutionHandler handler = new RejectedExecutionHandler() {
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-            System.out.println("转交调度线程池");
-            cacheQueue.offer(((OrderProcessThread) r).getOrder());
-        }
-    };
+
     final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
             CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME,
-            TimeUnit.SECONDS, new ArrayBlockingQueue(WORK_QUEUE_SIZE), this.handler);
+            TimeUnit.SECONDS, new ArrayBlockingQueue(WORK_QUEUE_SIZE));
 
     public StockExchangeCentor(String exChangeCentorName) {
         producerQueue = queueImplA;//new LinkedList<Order>();
@@ -61,7 +56,8 @@ public class StockExchangeCentor {
         inProcessThread = new InProcessThread();
         this.exChangeCentorName = exChangeCentorName;
         //waited queue init
-        waitedOrders = OrderQueueManager.getWaitedOrdersQueue();
+        waitedOrders = OrderQueueManager.getInstance().getWaitedOrdersQueue();
+        orderProcessThreadPoolManager = new OrderProcessThreadPoolManager();
 
     }
 
@@ -73,40 +69,16 @@ public class StockExchangeCentor {
         return true;
     }
 
-    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
-    final ScheduledFuture taskHandler = scheduler.scheduleAtFixedRate(new Runnable() {
-        @Override
-        public void run() {
-            if (!cacheQueue.isEmpty()) {
-                if (threadPool.getQueue().size() < WORK_QUEUE_SIZE) {
-                    System.out.print("调度：");
-                    Order order = cacheQueue.poll();
-                    waitedOrders[order.getOrderType().getId()].pushOrder(order);
-                   // OrderProcessThread orderProcessThread = new OrderProcessThread();
-                   //orderProcessThread.setOrder(order);
-                  //  threadPool.execute(orderProcessThread);
-                }
-                // while (msgQueue.peek() != null) {
-                // }
-            }
-        }
-    }, 0, 1, TimeUnit.SECONDS);
-
-
     private class InProcessThread extends Thread {
         public InProcessThread() {
             System.out.println("InProcessThread construct");
         }
-
         public void run() {
-            Order order;
             System.out.print("InProcessThread start");
             try {
                 while (inProcessState == WorkState.Working) {
                     if (!producerQueue.isEmpty()) {
                         while (!producerQueue.isEmpty()) {
-                            //System.out.println("current tempQueue size:"+
-                            //do swap
                             synchronized (producerQueue) {
                                 Queue<Order> temp = producerQueue;
                                 producerQueue = consumerQueue;
@@ -114,21 +86,31 @@ public class StockExchangeCentor {
                             }
                             OrderProcessThread orderProcessThread;
                             while (!consumerQueue.isEmpty()) {
-                                //orderProcessThread = new OrderProcessThread();
-                                //orderProcessThread.setOrder(consumerQueue.poll());
+                                Order order;
                                 order = consumerQueue.poll();
                                 waitedOrders[order.getOrderType().getId()].pushOrder(order);
-                               // threadPool.execute(orderProcessThread);
+//                              threadPool.execute(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        Order order;
+//                                        order = consumerQueue.poll();
+//
+//                                        try {
+//                                            waitedOrders[order.getOrderType().getId()].pushOrder(order);
+//                                        }catch (Exception e ){
+//                                            while (true){}
+//                                        }
+//
+//                                    }
+//                                });
                             }
                             sleep(500);
                         }
                     }
                 }
             } catch (Exception e) {
-
+            e.printStackTrace();
             }
-
-
         }
     }
 
@@ -137,6 +119,7 @@ public class StockExchangeCentor {
         stockExchangeCentor.setWorkState(WorkState.Working);
         stockExchangeCentor.setInProcessState(WorkState.Working);
         stockExchangeCentor.inProcessThread.start();
+        orderProcessThreadPoolManager.startProcess();
     }
 
     public static StockExchangeCentor getInstance() {
@@ -172,15 +155,6 @@ public class StockExchangeCentor {
     public void setStocks(List<Stock> stocks) {
         this.stocks = stocks;
     }
-
-    public void setProducerQueue(Queue<Order> producerQueue) {
-        this.producerQueue = producerQueue;
-    }
-
-    public Queue<Order> getProducerQueue() {
-        return producerQueue;
-    }
-
     public WorkState getWorkState() {
         return workState;
     }

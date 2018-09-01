@@ -49,9 +49,9 @@ public class Test {
         bob.setState(true);
         bob.setStockAccountInterface(new StockAccountInterfaceImpl());
         new Thread(tom).start();
-        new Thread(jerry).start();
-        new Thread(hans).start();
-        new Thread(bob).start();
+        //new Thread(jerry).start();
+       // new Thread(hans).start();
+       // new Thread(bob).start();
         StockExchangeCentor.start();
         while (true) {
         }

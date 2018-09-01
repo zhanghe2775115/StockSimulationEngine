@@ -9,15 +9,20 @@ import java.util.List;
 public class SortedOrderQueue {
     final private List<Order> mList = new LinkedList<>();
     final OrderEnum queueType;
-
+    private int queueSize = 0;
     public SortedOrderQueue(OrderEnum queueType) {
         this.queueType = queueType;
     }
 
     public boolean pushOrder(Order order){
-        return mList.add(order);
+
+        mList.add(order);
+        queueSize++;
+        return  true;
     }
     public Order getAndRemoveTopOrder() {
+        if (mList.size() ==0)
+            return null;
         return mList.remove(0);
     }
 }

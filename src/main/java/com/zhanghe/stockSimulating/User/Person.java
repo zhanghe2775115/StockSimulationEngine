@@ -67,10 +67,25 @@ public class Person implements Runnable {
 //        mStocks.add(stock);
 //        System.out.println("purchased stock: " + stock.getStockName() + " stockPrice:" + stock.getCurrPrice() + " balance: " + this.mCash);
 //        return true;
+        Order order1 = new Order();
+        order1.setOwner(stockAccountInterface);
+        order1.setAmount(1);
+        order1.setOrderType(OrderEnum.SELL);
+        List<Stock> stocks1 = stockAccountInterface.getAllStock();
+        Stock todo1 = stocks1.get(new Random().nextInt(stocks1.size()));
+        int price1 = todo1.getCurrPrice() + (new Random().nextInt(10) - 10);
+        order1.setPrice(price1);
+        order1.setStock(todo1);
+        String orderID1 = this.getmName() + "";
+        order1.setOrderID(orderID1);
+        //  System.out.println(this.mName + " " + order.getOrderType().toString() + " : " + order.getStock().toString());
+         stockAccountInterface.pushOrder(order1);
+
+
         Order order = new Order();
         order.setOwner(stockAccountInterface);
         order.setAmount(1);
-        order.setOrderType(OrderEnum.PURCHASE);
+        order.setOrderType(OrderEnum.BUYINTO);
         List<Stock> stocks = stockAccountInterface.getAllStock();
         Stock todo = stocks.get(new Random().nextInt(stocks.size()));
         int price = todo.getCurrPrice() + (new Random().nextInt(10) - 10);
@@ -78,7 +93,7 @@ public class Person implements Runnable {
         order.setStock(todo);
         String orderID = this.getmName() + "";
         order.setOrderID(orderID);
-        System.out.println(this.mName + " " + order.getOrderType().toString() + " : " + order.getStock().toString());
+       System.out.println(this.mName + " " + order.getOrderType().toString() + " : " + order.getStock().toString());
         return stockAccountInterface.pushOrder(order);
 
     }
