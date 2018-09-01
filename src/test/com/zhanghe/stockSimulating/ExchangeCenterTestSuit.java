@@ -1,10 +1,14 @@
-package com.StockSimulator;
+package com.zhanghe.stockSimulating;
 
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import com.StockSimulator.Entities.*;
+
+import com.zhanghe.stockSimulating.Institution.exchangeCentor.StockExchangeCentor;
+import com.zhanghe.stockSimulating.User.*;
+import com.zhanghe.stockSimulating.facade.bean.*;
+import com.zhanghe.stockSimulating.facade.impl.StockAccountInterfaceImpl;
 import org.junit.jupiter.api.Test;
 
 /**
