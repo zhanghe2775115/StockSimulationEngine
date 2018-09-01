@@ -1,8 +1,8 @@
 package com.zhanghe.stockSimulating.Util;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class IDGenerator {
 
@@ -10,19 +10,18 @@ public class IDGenerator {
     private short machineHash;
 
     private AtomicInteger counter;
-    private AtomicLong lastTimestamp;
+    private long lastTimestamp;
 
     private ByteBuffer byteBuffer;
+    private AtomicBoolean lock;
 
-    public IDGenerator(String machineId) {
+    IDGenerator(String machineId) {
         this.machineId = machineId;
         machineHash = (short) (machineId.hashCode() >> 16);
-
         // 【TODO】 validate machineId here to avoid collision
-
+        lock = new AtomicBoolean(false);
         counter = new AtomicInteger(0);
-        lastTimestamp = new AtomicLong(System.currentTimeMillis());
-
+        lastTimestamp = System.currentTimeMillis();
         byteBuffer = ByteBuffer.allocate(16);
     }
 
@@ -31,17 +30,26 @@ public class IDGenerator {
      *   @description generate a new id
      * */
 
-    public byte[] generateOrderId() {
+    byte[] generateOrderId() {
 
         long timestamp = System.currentTimeMillis();
-        if (lastTimestamp.getAndSet(timestamp) != timestamp) {
-            counter.set(0);
+
+        while (lock.getAndSet(true)) {  // get spin_lock
+            try {
+                Thread.sleep(0,1);
+            }catch (InterruptedException e){}
         }
 
+        if (lastTimestamp != timestamp) {
+            lastTimestamp = timestamp;
+            counter.set(0);
+        }
+        lock.set(false);                    // release spin_lock
+
         byteBuffer.clear();
-        byteBuffer.putLong(timestamp);
+        byteBuffer.putLong(lastTimestamp);
         byteBuffer.putShort(machineHash);
-        byteBuffer.putInt(counter.getAndIncrement());    // 每毫秒不大于 65536 个 id;
+        byteBuffer.putInt(counter.getAndIncrement());
         return byteBuffer.array().clone();
     }
 
